@@ -13,7 +13,7 @@ const adminAuth = (req, res, next) => {
         }
         next();
     } catch (error) {
-        res.status(401).send({ error: 'Please login as admin.' });
+        res.status(401).send({ success: false, error: 'Please login as admin.' });
     }
 };
 
@@ -25,7 +25,7 @@ const userAuth = (req, res, next) => {
         req.user = decoded;
         next();
     } catch (error) {
-        res.status(401).send({ error: 'Please login.' });
+        res.status(401).send({success: false, error: 'Please login.' });
     }
 };
 
@@ -34,9 +34,9 @@ const userAuth = (req, res, next) => {
 router.get('/', userAuth, async (req, res) => {
     try {
         const participants = await Participant.find({});
-        res.send(participants);
+        res.send({success: true, data: participants});
     } catch (error) {
-        res.status(500).send(error);
+        res.status(500).send({success: false, error});
     }
 });
 
@@ -46,9 +46,9 @@ router.post('/', adminAuth, async (req, res) => {
     try {
         const participant = new Participant(req.body);
         await participant.save();
-        res.status(201).send(participant);
+        res.status(201).send({success: true, data: participant, message: "Participant created successfuly"});
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).send({success: false, error});
     }
 });
 
@@ -57,13 +57,13 @@ router.post('/:id/episodes', adminAuth, async (req, res) => {
     try {
         const participant = await Participant.findById(req.params.id);
         if (!participant) {
-            return res.status(404).send();
+            return res.status(404).send({success: false, error: "Perticipant not found"});
         }
         participant.episodes.push(req.body);
         await participant.save();
-        res.send(participant);
+        res.send({success: true, data: participant, message: "participant updated succesfully"});
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).send({success: false, error});
     }
 });
 

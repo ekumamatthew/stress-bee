@@ -1,9 +1,8 @@
-
 ## API Endpoints
 
 This document outlines the available API endpoints, their expected Bodys, and the expected Returnss.
 
-#### Base Url: `https://stresslysis.onrender.com` 
+#### Base Url: `https://stresslysis.onrender.com`
 
 ### User Registration
 
@@ -18,7 +17,6 @@ This document outlines the available API endpoints, their expected Bodys, and th
   - Error: Status 400 with error message
 - **Description**: Registers a new user. Passwords are hashed before storage.
 
-
 ### User Login
 
 - **Endpoint**: `/api/auth/login`
@@ -30,7 +28,6 @@ This document outlines the available API endpoints, their expected Bodys, and th
   - Success: Status 200 with user details and JWT token
   - Error: Status 401 for login failure, Status 400 for other errors
 - **Description**: Authenticates a user and returns a JWT for accessing protected routes.
-
 
 ### Add Participant (Supervisor Only)
 
@@ -44,7 +41,6 @@ This document outlines the available API endpoints, their expected Bodys, and th
   - Success: Status 201 with participant details
   - Error: Status 401 for unauthorized access, Status 400 for other errors
 - **Description**: Adds a new participant to the database. Requires supervisor privileges.
-
 
 ### Add Episode Data to Participant (Supervisor Only)
 
@@ -60,7 +56,6 @@ This document outlines the available API endpoints, their expected Bodys, and th
   - Error: Status 404 if participant not found, Status 401 for unauthorized access, Status 400 for other errors
 - **Description**: Adds episode data to an existing participant. Requires supervisor privileges.
 
-
 ## Get All Participants
 
 - **Endpoint**: `/api/participants`
@@ -75,23 +70,23 @@ This document outlines the available API endpoints, their expected Bodys, and th
 ### Example Response:
 
 ```json
-[
+{
+  "success": true,
+  "data": [
     {
-        "_id": "5f50c31f1234567890abcdef",
-        "name": "Participant One",
-        "episodes": [
-            { "STAI": 8, "NASA": 31 },
-            { "STAI": 9, "NASA": 30 }
-        ]
+      "_id": "5f50c31f1234567890abcdef",
+      "name": "Participant One",
+      "episodes": [
+        { "STAI": 8, "NASA": 31 },
+        { "STAI": 9, "NASA": 30 }
+      ]
     },
     {
-        "_id": "5f50c31f1234567890fedcba",
-        "name": "Participant Two",
-        "episodes": [
-            { "STAI": 7, "NASA": 32 }
-        ]
+      "_id": "5f50c31f1234567890fedcba",
+      "name": "Participant Two",
+      "episodes": [{ "STAI": 7, "NASA": 32 }]
     }
     // ... more participants
-]
+  ]
+}
 ```
-
