@@ -10,6 +10,7 @@ This document outlines the available API endpoints, their expected Bodys, and th
 - **Endpoint**: `/api/auth/register`
 - **Method**: `POST`
 - **Body**:
+  - `name`: String (required)
   - `username`: String (required)
   - `password`: String (required)
 - **Returns**:
