@@ -3,6 +3,7 @@
 
 This document outlines the available API endpoints, their expected Bodys, and the expected Returnss.
 
+#### Base Url: `https://stresslysis.onrender.com` 
 
 ### User Registration
 
