@@ -8,6 +8,7 @@ const adminAuth = (req, res, next) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '');
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log(decoded)
         if (!decoded.isAdmin) {
             throw new Error();
         }
