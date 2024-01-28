@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const episodeSchema = new mongoose.Schema({
-    STAI: Number,
-    NASA: Number
+    STAI: { type: Number, required: true },
+    NASA: { type: Number, required: true }
 }, { _id: false });
 
 const participantSchema = new mongoose.Schema({
