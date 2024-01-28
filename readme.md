@@ -90,3 +90,51 @@ This document outlines the available API endpoints, their expected Bodys, and th
   ]
 }
 ```
+
+## Get Single Participants {Supervisor Only}
+
+- **Endpoint**: `/api/participants/{participant Id}`
+- **Method**: `GET`
+- **Header**:
+  - `Authorization`: Bearer Token (JWT)
+- **Returns**:
+  - Success: Status 200 with a participant details.
+  - Error: Status 401 for unauthorized access, Status 400 for other errors
+- **Description**: Retrieves a list of all participants in the database. Accessible to both admin and user roles.
+
+### Example Response:
+
+```json
+{
+  "success": true,
+  "data": {
+      "_id": "5f50c31f1234567890abcdef",
+      "name": "Participant One",
+      "episodes": [
+        { "STAI": 8, "NASA": 31 },
+        { "STAI": 9, "NASA": 30 }
+      ]
+    },
+    "message": "participan found"
+}
+```
+
+## Delete a Participants {Supervisor Only}
+
+- **Endpoint**: `/api/participants/{participant Id}`
+- **Method**: `DELETE`
+- **Header**:
+  - `Authorization`: Bearer Token (JWT)
+- **Returns**:
+  - Success: Status 200 with a message.
+  - Error: Status 401 for unauthorized access, Status 400 for other errors
+- **Description**: Retrieves a list of all participants in the database. Accessible to both admin and user roles.
+
+### Example Response:
+
+```json
+{
+  "success": true,
+    "message": "participan deleted"
+}
+```
