@@ -11,6 +11,7 @@ router.post('/register', async (req, res) => {
         await user.save();
         res.status(201).send({ success: true, user });
     } catch (error) {
+        console.log(error)
         res.status(400).send({success: false, error});
     }
 });
@@ -25,6 +26,7 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign({ _id: user._id, isAdmin: user.role === 'supervisor' }, process.env.JWT_SECRET);
         res.send({success: true, user, token });
     } catch (error) {
+        console.log(error)
         res.status(400).send({success: false, error});
     }
 });

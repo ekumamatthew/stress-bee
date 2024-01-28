@@ -13,6 +13,7 @@ const adminAuth = (req, res, next) => {
         }
         next();
     } catch (error) {
+        console.log(error)
         res.status(401).send({ success: false, error: 'Please login as admin.' });
     }
 };
@@ -25,6 +26,7 @@ const userAuth = (req, res, next) => {
         req.user = decoded;
         next();
     } catch (error) {
+        console.log(error)
         res.status(401).send({success: false, error: 'Please login.' });
     }
 };
@@ -36,6 +38,7 @@ router.get('/', userAuth, async (req, res) => {
         const participants = await Participant.find({});
         res.send({success: true, data: participants});
     } catch (error) {
+        console.log(error)
         res.status(500).send({success: false, error});
     }
 });
@@ -48,6 +51,7 @@ router.post('/', adminAuth, async (req, res) => {
         await participant.save();
         res.status(201).send({success: true, data: participant, message: "Participant created successfuly"});
     } catch (error) {
+        console.log(error)
         res.status(400).send({success: false, error});
     }
 });
@@ -63,6 +67,7 @@ router.post('/:id/episodes', adminAuth, async (req, res) => {
         await participant.save();
         res.send({success: true, data: participant, message: "participant updated succesfully"});
     } catch (error) {
+        console.log(error)
         res.status(400).send({success: false, error});
     }
 });
