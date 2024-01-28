@@ -69,6 +69,7 @@ router.post('/:id/episodes', adminAuth, async (req, res) => {
         console.log({ STAI, NASA })
         participant.episodes.push({ STAI, NASA });
         await participant.save();
+        console.log({participant})
         res.send({ success: true, data: participant, message: "participant updated succesfully" });
     } catch (error) {
         console.error(error)
