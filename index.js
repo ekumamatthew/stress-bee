@@ -19,5 +19,50 @@ app.all('*', (req, res) => {
     });
 });
 
+//error middleware
+app.use((err, req, res, next) => {
+    let error = { ...err };
+    error.message = err.message;
+    console.log(err.message);
+
+    // Mongoose bad ObjectId
+    if (err.name === "CastError") {
+        const message = `Resource not found!`;
+        error = new ErrorResponse(message, 404);
+    }
+
+    // Mongoose Duplicate Key
+    if (err.code === 11000) {
+        // Constructed the Duplicate message
+        const duplicates = Object.entries(err.keyValue).map(([id, value]) => ({ id, value }));
+        let message = "Resource with ";
+        duplicates.forEach(duplicate => {
+            message += `${duplicate.id}: ${duplicate.value}, `;
+        })
+        message += `already exists. `;
+        error = new ErrorResponse(message, 409);
+    }
+
+    // Mongoose Validation Error
+    if (err.name === "ValidationError") {
+        const message = (err.errors).map((val) => val.message);
+        error = new ErrorResponse(message, 400);
+    }
+
+    res
+        .status(error.statusCode || 500)
+        .send({ success: false, error: error.message || "Server Error" });
+}
+)
+
+//error handler
+class ErrorResponse extends Error {
+    constructor(message, statusCode) {
+        super(message);
+        this.statusCode = statusCode;
+    }
+}
+
+
 const PORT = process.env.PORT || 5550;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
