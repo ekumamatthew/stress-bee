@@ -8,13 +8,13 @@ const adminAuth = (req, res, next) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '');
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(decoded)
+        // console.log(decoded)
         if (!decoded.isAdmin) {
             throw new Error();
         }
         next();
     } catch (error) {
-        console.log("we hane an error")
+        console.log("we have an error")
         res.status(401).send({ success: false, error: 'Please login as admin.' });
     }
 };
@@ -66,10 +66,8 @@ router.post('/:id/episodes', adminAuth, async (req, res) => {
             return res.status(404).send({ success: false, error: "Perticipant not found" });
         }
         const { STAI, NASA } = req.body;
-        console.log({ STAI, NASA })
         participant.episodes.push({ STAI, NASA });
         await participant.save();
-        console.log({participant})
         res.send({ success: true, data: participant, message: "participant updated succesfully" });
     } catch (error) {
         console.error(error)
