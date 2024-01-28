@@ -11,7 +11,7 @@ router.post('/register', async (req, res) => {
         await user.save();
         res.status(201).send({ success: true, user });
     } catch (error) {
-        console.log(error)
+        console.error(error)
         res.status(400).send({success: false, error});
     }
 });
@@ -19,17 +19,15 @@ router.post('/register', async (req, res) => {
 // Login
 router.post('/login', async (req, res) => {
     try {
-        console.log(req.body)
-        let user = await User.findOne({ username: req.body.username }).select("+password");
-        console.log(user)
+        const user = await User.findOne({ username: req.body.username }).select("+password");
         if (!user || !await bcrypt.compare(req.body.password, user.password)) {
             return res.status(401).send({ success: false, error: 'Login failed!' });
         }
-        user = await User.findOne({ username: req.body.username })
+        const {password, ...userWithoutPassword} = user.toObject()
         const token = jwt.sign({ _id: user._id, isAdmin: user.role === 'supervisor' }, process.env.JWT_SECRET);
-        res.send({success: true, user, token });
+        res.send({success: true, user: userWithoutPassword, token });
     } catch (error) {
-        console.log(error)
+        console.error(error)
         res.status(400).send({success: false, error});
     }
 });
