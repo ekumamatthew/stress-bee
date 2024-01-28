@@ -65,7 +65,9 @@ router.post('/:id/episodes', adminAuth, async (req, res) => {
         if (!participant) {
             return res.status(404).send({ success: false, error: "Perticipant not found" });
         }
-        participant.episodes.push(req.body);
+        const { STAI, NASA } = req.body;
+        console.log({ STAI, NASA })
+        participant.episodes.push({ STAI, NASA });
         await participant.save();
         res.send({ success: true, data: participant, message: "participant updated succesfully" });
     } catch (error) {
