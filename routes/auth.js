@@ -19,7 +19,9 @@ router.post('/register', async (req, res) => {
 // Login
 router.post('/login', async (req, res) => {
     try {
+        console.log(req.body)
         const user = await User.findOne({ username: req.body.username });
+        console.log(user)
         if (!user || !await bcrypt.compare(req.body.password, user.password)) {
             return res.status(401).send({ success: false, error: 'Login failed!' });
         }
