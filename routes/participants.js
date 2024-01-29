@@ -102,5 +102,52 @@ router.delete('/:id', adminAuth, async (req, res) => {
     }
 });
 
+// Delete a specific episode of a participant (Admin only)
+router.delete('/:participantId/episodes/:episodeIndex', adminAuth, async (req, res) => {
+    try {
+        const participant = await Participant.findById(req.params.participantId);
+        if (!participant) {
+            return res.status(404).send({ success: false, error: 'Participant not found' });
+        }
+
+        const episodeIndex = parseInt(req.params.episodeIndex) - 1; // Convert to zero-based index
+        if (episodeIndex < 0 || episodeIndex >= participant.episodes.length) {
+            return res.status(404).send({ success: false, error: 'Episode not found' });
+        }
+
+        participant.episodes.splice(episodeIndex, 1);
+        await participant.save();
+        res.send({ success: true, message: 'Episode deleted successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ success: false, error });
+    }
+});
+
+// Edit a specific episode of a participant (Admin only)
+router.patch('/:participantId/episodes/:episodeIndex', adminAuth, async (req, res) => {
+    try {
+        const participant = await Participant.findById(req.params.participantId);
+        if (!participant) {
+            return res.status(404).send({ success: false, error: 'Participant not found' });
+        }
+
+        const episodeIndex = parseInt(req.params.episodeIndex) - 1; // Convert to zero-based index
+        if (episodeIndex < 0 || episodeIndex >= participant.episodes.length) {
+            return res.status(404).send({ success: false, error: 'Episode not found' });
+        }
+
+        const { STAI, NASA } = req.body;
+        if (STAI) participant.episodes[episodeIndex].STAI = STAI;
+        if (NASA) participant.episodes[episodeIndex].NASA = NASA;
+
+        await participant.save();
+        res.send({ success: true, data: participant, message: 'Episode updated successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ success: false, error });
+    }
+});
+
 
 module.exports = router;

@@ -47,8 +47,8 @@ This document outlines the available API endpoints, their expected Bodys, and th
 - **Endpoint**: `/api/participants/:id/episodes`
 - **Method**: `POST`
 - **Body**:
-  - `STAI`: Number
-  - `NASA`: Number
+  - `STAI`: Number (required)
+  - `NASA`: Number (required)
 - **Header**:
   - `Authorization`: Bearer Token (JWT)
 - **Returns**:
@@ -136,5 +136,48 @@ This document outlines the available API endpoints, their expected Bodys, and th
 {
   "success": true,
     "message": "participan deleted"
+}
+```
+
+## Delete a Episode {Supervisor Only}
+
+- **Endpoint**: `/api/participants/:participantId/episodes/:episodeIndex`
+- **Method**: `DELETE`
+- **Header**:
+  - `Authorization`: Bearer Token (JWT)
+- **Returns**:
+  - Success: Status 200 with a message.
+  - Error: Status 401 for unauthorized access, Status 400 for other errors
+- **Description**: Retrieves a list of all participants in the database. Accessible to both admin and user roles.
+
+### Example Response:
+
+```json
+{
+  "success": true,
+    "message": "Episode deleted successfully"
+}
+```
+
+## Delete a Episode {Supervisor Only}
+
+- **Endpoint**: `/api/participants/:participantId/episodes/:episodeIndex`
+- **Method**: `PATCH`
+- **Header**:
+  - `Authorization`: Bearer Token (JWT)
+- **Body**:
+  - `STAI`: Number (Optional)
+  - `NASA`: Number (Optional)
+- **Returns**:
+  - Success: Status 200 with a message.
+  - Error: Status 401 for unauthorized access, Status 400 for other errors
+- **Description**: Retrieves a list of all participants in the database. Accessible to both admin and user roles.
+
+### Example Response:
+
+```json
+{
+  "success": true,
+    "message": "Episode deleted successfully"
 }
 ```
