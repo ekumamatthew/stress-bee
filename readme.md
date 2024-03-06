@@ -56,6 +56,32 @@ This document outlines the available API endpoints, their expected Bodys, and th
   - Error: Status 404 if participant not found, Status 401 for unauthorized access, Status 400 for other errors
 - **Description**: Adds episode data to an existing participant. Requires supervisor privileges.
 
+### Add Comment to Participant (Supervisor Only)
+
+- **Endpoint**: `/api/participants/:id/comment`
+- **Method**: `POST`
+- **Body**:
+  - `message`: String (required)
+- **Header**:
+  - `Authorization`: Bearer Token (JWT)
+- **Returns**:
+  - Success: Status 200 with updated participant details
+  - Error: Status 404 if participant not found, Status 401 for unauthorized access, Status 400 for other errors
+- **Description**: Adds episode data to an existing participant. Requires supervisor privileges.
+
+
+### Get Comment on Participant (Supervisor Only)
+
+- **Endpoint**: `/api/participants/:id/comment`
+- **Method**: `GET`
+- **Header**:
+  - `Authorization`: Bearer Token (JWT)
+- **Returns**:
+  - Success: Status 200 with updated participant details
+  - Error: Status 404 if participant not found, Status 401 for unauthorized access, Status 400 for other errors
+- **Description**: Adds episode data to an existing participant. Requires supervisor privileges.
+
+
 ## Get All Participants
 
 - **Endpoint**: `/api/participants`

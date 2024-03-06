@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const Participant = require('../models/participant');
+const User = require('../models/user');
 const router = express.Router();
 
 // Middleware to authenticate supervisor
@@ -8,9 +9,10 @@ const adminAuth = (req, res, next) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '');
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.userId = decoded.id;
         // console.log(decoded)
         if (!decoded.isAdmin) {
-            throw new Error();
+            throw
         }
         next();
     } catch (error) {
@@ -24,7 +26,7 @@ const userAuth = (req, res, next) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '');
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
+        req.userId = decoded.id;
         next();
     } catch (error) {
         console.log("we hane an error")
@@ -69,6 +71,40 @@ router.post('/:id/episodes', adminAuth, async (req, res) => {
         participant.episodes.push({ STAI, NASA });
         await participant.save();
         res.send({ success: true, data: participant, message: "participant updated succesfully" });
+    } catch (error) {
+        console.error(error)
+        res.status(400).send({ success: false, error });
+    }
+});
+
+// Add comment to a participant (Admin only)
+router.post('/:id/comment', adminAuth, async (req, res) => {
+    try {
+        const participant = await Participant.findById(req.params.id);
+        if (!participant) {
+            return res.status(404).send({ success: false, error: "Perticipant not found" });
+        }
+        const user = await User.findById(req.userId)
+        const { comment } = req.body;
+        participant.comments.push({ message: comment, name: user.name });
+        await participant.save();
+        res.send({ success: true, data: participant, message: "comment added succesfully" });
+    } catch (error) {
+        console.error(error)
+        res.status(400).send({ success: false, error });
+    }
+});
+
+
+// get comments a participant (User only)
+router.get('/:id/comment', userAuth, async (req, res) => {
+    try {
+        const participant = await Participant.findById(req.params.id);
+        if (!participant) {
+            return res.status(404).send({ success: false, error: "Perticipant not found" });
+        }
+
+        res.send({ success: true, data: participant.comments, message: "comment fetched" });
     } catch (error) {
         console.error(error)
         res.status(400).send({ success: false, error });

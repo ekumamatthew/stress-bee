@@ -24,7 +24,7 @@ router.post('/login', async (req, res) => {
             return res.status(401).send({ success: false, error: 'Login failed!' });
         }
         const {password, ...userWithoutPassword} = user.toObject()
-        const token = jwt.sign({ _id: user._id, isAdmin: user.role === 'supervisor' }, process.env.JWT_SECRET);
+        const token = jwt.sign({ id: user._id, isAdmin: user.role === 'supervisor' }, process.env.JWT_SECRET);
         res.send({success: true, user: userWithoutPassword, token });
     } catch (error) {
         console.error(error)
