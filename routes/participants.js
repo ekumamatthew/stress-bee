@@ -12,7 +12,7 @@ const adminAuth = (req, res, next) => {
         req.userId = decoded.id;
         // console.log(decoded)
         if (!decoded.isAdmin) {
-            throw
+            throw 'Not Authorided';
         }
         next();
     } catch (error) {
