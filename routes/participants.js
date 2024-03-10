@@ -79,19 +79,19 @@ router.post('/:id/episodes', adminAuth, async (req, res) => {
 
 // Add comment to a participant (Admin only)
 router.post('/:id/comment', adminAuth, async (req, res) => {
+    if(!req.body.comment) return res.status(400).send({ success: false, error: "Error: comment is required" });
     try {
         const participant = await Participant.findById(req.params.id);
         if (!participant) {
-            return res.status(404).send({ success: false, error: "Perticipant not found" });
+            return res.status(404).send({ success: false, error: "Participant not found" });
         }
-        const user = await User.findById(req.userId)
-        const { comment } = req.body;
-        participant.comments.push({ message: comment, name: user.name });
+        const user = await User.findById(req.userId, "name")
+        participant.comments.push({ message: req.body.comment, name: user.name });
         await participant.save();
-        res.send({ success: true, data: participant, message: "comment added succesfully" });
+       return res.send({ success: true, data: participant, message: "comment added succesfully" });
     } catch (error) {
         console.error(error)
-        res.status(400).send({ success: false, error });
+        res.status(500).send({ success: false, error: "Error: could not add comment" });
     }
 });
 
@@ -107,7 +107,7 @@ router.get('/:id/comment', userAuth, async (req, res) => {
         res.send({ success: true, data: participant.comments, message: "comment fetched" });
     } catch (error) {
         console.error(error)
-        res.status(400).send({ success: false, error });
+        res.status(500).send({ success: false, error: "Error: Something wrong happened" });
     }
 });
 
