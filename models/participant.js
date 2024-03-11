@@ -8,7 +8,7 @@ const episodeSchema = new mongoose.Schema({
 const comment = new mongoose.Schema({
     message: { type: String, required: true  },
     name: { type: String, required: true  }
-}, { _id: false })
+}, { _id: false, timestamps: true })
 
 const participantSchema = new mongoose.Schema({
     name: { type: String, required: true },
