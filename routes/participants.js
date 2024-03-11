@@ -43,7 +43,7 @@ router.get('/', userAuth, async (req, res) => {
         res.send({ success: true, data: participants });
     } catch (error) {
         console.error(error)
-        res.status(500).send({ success: false, error });
+        res.status(400).send({ success: false, error });
     }
 });
 
@@ -91,7 +91,7 @@ router.post('/:id/comment', adminAuth, async (req, res) => {
        return res.send({ success: true, data: participant, message: "comment added succesfully" });
     } catch (error) {
         console.error(error)
-        res.status(500).send({ success: false, error: "Error: could not add comment" });
+        res.status(400).send({ success: false, error: "Error: could not add comment" });
     }
 });
 
@@ -107,7 +107,7 @@ router.get('/:id/comment', userAuth, async (req, res) => {
         res.send({ success: true, data: participant.comments, message: "comment fetched" });
     } catch (error) {
         console.error(error)
-        res.status(500).send({ success: false, error: "Error: Something wrong happened" });
+        res.status(400).send({ success: false, error: "Error: Something wrong happened" });
     }
 });
 
@@ -156,7 +156,7 @@ router.delete('/:participantId/episodes/:episodeIndex', adminAuth, async (req, r
         res.send({ success: true, message: 'Episode deleted successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).send({ success: false, error });
+        res.status(400).send({ success: false, error });
     }
 });
 
@@ -181,7 +181,7 @@ router.patch('/:participantId/episodes/:episodeIndex', adminAuth, async (req, re
         res.send({ success: true, data: participant, message: 'Episode updated successfully' });
     } catch (error) {
         console.error(error);
-        res.status(500).send({ success: false, error });
+        res.status(400).send({ success: false, error });
     }
 });
 
