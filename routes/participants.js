@@ -205,9 +205,9 @@ router.patch('/:participantId/episodes/:episodeIndex', adminAuth, async (req, re
             return res.status(404).send({ success: false, error: 'Episode not found' });
         }
 
-        const { STAI, NASA } = req.body;
-        if (STAI) participant.episodes[episodeIndex].STAI = STAI;
-        if (NASA) participant.episodes[episodeIndex].NASA = NASA;
+        const { INITIAL_STRESS, FINAL_STRESS } = req.body;
+        if (INITIAL_STRESS) participant.episodes[episodeIndex].INITIAL_STRESS = INITIAL_STRESS;
+        if (FINAL_STRESS) participant.episodes[episodeIndex].FINAL_STRESS = FINAL_STRESS;
 
         await participant.save();
         res.send({ success: true, data: participant, message: 'Episode updated successfully' });
