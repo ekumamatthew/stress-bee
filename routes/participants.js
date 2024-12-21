@@ -67,8 +67,8 @@ router.post('/:id/episodes', adminAuth, async (req, res) => {
         if (!participant) {
             return res.status(404).send({ success: false, error: "Perticipant not found" });
         }
-        const { STAI, NASA } = req.body;
-        participant.episodes.push({ STAI, NASA });
+        const { FINAL_STRESS, INITIAL_STRESS } = req.body;
+        participant.episodes.push({ FINAL_STRESS, INITIAL_STRESS });
         await participant.save();
         res.send({ success: true, data: participant, message: "participant updated succesfully" });
     } catch (error) {
@@ -94,6 +94,38 @@ router.post('/:id/comment', adminAuth, async (req, res) => {
         res.status(400).send({ success: false, error: "Error: could not add comment" });
     }
 });
+// add initial stress value
+
+// router.post("/:id/initial_stress", adminAuth, async (req, res) => {
+//   if (!req.body.initial_stress)
+//     return res
+//       .status(400)
+//       .send({ success: false, error: "Error: initial_stress is required" });
+//   try {
+//     const participant = await Participant.findById(req.params.id);
+//     if (!participant) {
+//       return res
+//         .status(404)
+//         .send({ success: false, error: "Participant not found" });
+//     }
+//     const user = await User.findById(req.userId, "name");
+//     participant.initial_stress.push({
+//       message: req.body.comment,
+//       name: user.name,
+//     });
+//     await participant.save();
+//     return res.send({
+//       success: true,
+//       data: participant,
+//       message: "initial stress added succesfully",
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res
+//       .status(400)
+//       .send({ success: false, error: "Error: could not add comment" });
+//   }
+// });
 
 
 // get comments a participant (User only)
