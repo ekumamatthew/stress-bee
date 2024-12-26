@@ -18,7 +18,7 @@ const comment = new mongoose.Schema(
 
 const participantSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  episodes: [episodeSchema],
+  episodes: { episodeSchema },
   comments: [comment],
 });
 
