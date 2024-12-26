@@ -223,23 +223,23 @@ router.delete("/:participantId/episode", adminAuth, async (req, res) => {
   }
 });
 
-router.delete("/:participantId/episode", adminAuth, async (req, res) => {
-  try {
-    const participant = await Participant.findById(req.params.participantId);
-    if (!participant) {
-      return res
-        .status(404)
-        .send({ success: false, error: "Participant not found" });
-    }
+// router.delete("/:participantId/episode", adminAuth, async (req, res) => {
+//   try {
+//     const participant = await Participant.findById(req.params.participantId);
+//     if (!participant) {
+//       return res
+//         .status(404)
+//         .send({ success: false, error: "Participant not found" });
+//     }
 
-    participant.episodes = undefined; // Remove the episode object
-    await participant.save();
-    res.send({ success: true, message: "Episode deleted successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(400).send({ success: false, error });
-  }
-});
+//     participant.episodes = undefined; // Remove the episode object
+//     await participant.save();
+//     res.send({ success: true, message: "Episode deleted successfully" });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).send({ success: false, error });
+//   }
+// });
 
 // Edit the episode object of a participant (Admin only)
 router.patch("/:participantId/episode", adminAuth, async (req, res) => {
@@ -253,8 +253,9 @@ router.patch("/:participantId/episode", adminAuth, async (req, res) => {
 
     const { INITIAL_STRESS, FINAL_STRESS } = req.body;
 
-    if (INITIAL_STRESS) participant.episodes.INITIAL_STRESS = INITIAL_STRESS;
-    if (FINAL_STRESS) participant.episodes.FINAL_STRESS = FINAL_STRESS;
+    // Update fields directly as frontend already validates them
+    participant.episodes.INITIAL_STRESS = INITIAL_STRESS;
+    participant.episodes.FINAL_STRESS = FINAL_STRESS;
 
     await participant.save();
     res.send({
@@ -264,9 +265,10 @@ router.patch("/:participantId/episode", adminAuth, async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(400).send({ success: false, error });
+    res.status(500).send({ success: false, error: "Internal server error" });
   }
 });
+
 
 
 module.exports = router;
