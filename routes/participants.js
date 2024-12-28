@@ -38,11 +38,28 @@ const userAuth = (req, res, next) => {
 // Get all participants
 router.get("/", userAuth, async (req, res) => {
   try {
-    const participants = await Participant.find({});
-    res.send({ success: true, data: participants });
+    const { role, name } = req.user; // Assuming `userAuth` middleware adds `role` and `name` to `req.user`.
+
+    let participants;
+
+    if (role === "supervisor") {
+      // Fetch all participants for supervisors
+      participants = await Participant.find({});
+    } else if (role === "participant") {
+      // Fetch only the participant matching the logged-in user's name
+      participants = await Participant.find({ name });
+    } else {
+      // If role is not recognized, return an empty array
+      participants = [];
+    }
+
+    res.status(200).send({ success: true, data: participants });
   } catch (error) {
     console.error(error);
-    res.status(400).send({ success: false, error });
+    res.status(500).send({
+      success: false,
+      error: "Server error while fetching participants.",
+    });
   }
 });
 
@@ -51,13 +68,11 @@ router.post("/", adminAuth, async (req, res) => {
   try {
     const participant = new Participant(req.body);
     await participant.save();
-    res
-      .status(201)
-      .send({
-        success: true,
-        data: participant,
-        message: "Participant created successfuly",
-      });
+    res.status(201).send({
+      success: true,
+      data: participant,
+      message: "Participant created successfuly",
+    });
   } catch (error) {
     console.error(error);
     res.status(400).send({ success: false, error });
