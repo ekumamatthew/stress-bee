@@ -38,41 +38,37 @@ const userAuth = (req, res, next) => {
 // Get all participants
 router.get("/", userAuth, async (req, res) => {
   try {
-    // Debug: Log incoming user information
-    console.log("User Info:", req.user);
+    const { role, name } = req.query;
+    console.log("Query Parameters - Role:", role, "Name:", name);
 
-    // Validate user role and name
-    if (!req.user || !req.user.role) {
-      console.error("Missing or invalid user role in the request.");
+    if (!role || !name) {
       return res.status(400).send({
         success: false,
         error: "Missing or invalid user role in the request.",
       });
     }
 
-    const { role, name } = req.user;
-    let participants;
+    const user = req.user; // Populated by userAuth middleware
+    console.log("User from middleware:", user);
 
+    // Fetch participants as per role
+    let participants = [];
     if (role === "supervisor") {
-      console.log("Supervisor role detected. Fetching all participants.");
       participants = await Participant.find({});
     } else if (role === "participant") {
-      console.log(`Participant role detected. Fetching data for name: ${name}`);
       participants = await Participant.find({ name });
-    } else {
-      console.error("Invalid role detected. No participants to fetch.");
-      participants = [];
     }
 
     res.status(200).send({ success: true, data: participants });
   } catch (error) {
-    console.error("Error fetching participants:", error.stack);
+    console.error("Error fetching participants:", error.message);
     res.status(500).send({
       success: false,
       error: "Server error while fetching participants.",
     });
   }
 });
+
 
 
 
