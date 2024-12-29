@@ -38,30 +38,32 @@ const userAuth = (req, res, next) => {
 // Get all participants
 router.get("/", userAuth, async (req, res) => {
   try {
-    const { role, name } = req.user; // Assuming `userAuth` middleware adds `role` and `name` to `req.user`.
+    const { role, name } = req.user;
 
     let participants;
 
     if (role === "supervisor") {
-      // Fetch all participants for supervisors
+      // Supervisors see all participants
       participants = await Participant.find({});
     } else if (role === "participant") {
-      // Fetch only the participant matching the logged-in user's name
+      // Participants only see their own data
       participants = await Participant.find({ name });
     } else {
-      // If role is not recognized, return an empty array
       participants = [];
     }
 
     res.status(200).send({ success: true, data: participants });
   } catch (error) {
-    console.error(error);
-    res.status(500).send({
-      success: false,
-      error: "Server error while fetching participants.",
-    });
+    console.error("Error fetching participants:", error.message);
+    res
+      .status(500)
+      .send({
+        success: false,
+        error: "Server error while fetching participants.",
+      });
   }
 });
+
 
 // Add participant (Admin only)
 router.post("/", adminAuth, async (req, res) => {
