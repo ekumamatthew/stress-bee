@@ -37,4 +37,14 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/logout", async (req, res) => {
+  try {
+    // On the server side, we can suggest the client delete the token
+    res.send({ success: true, message: "Logged out successfully!" });
+  } catch (error) {
+    console.error(error);
+    res.status(400).send({ success: false, error: "Logout failed!" });
+  }
+});
+
 module.exports = router;
