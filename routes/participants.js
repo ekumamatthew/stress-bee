@@ -38,50 +38,26 @@ const userAuth = (req, res, next) => {
 // Get all participants
 router.get("/", userAuth, async (req, res) => {
   try {
-    const { role, name } = req.query;
-    console.log("Query Parameters - Role:", role, "Name:", name);
-
-    if (!role || !name) {
-      return res.status(400).send({
-        success: false,
-        error: "Missing or invalid user role in the request.",
-      });
-    }
-
-    const user = req.user; // Populated by userAuth middleware
-    console.log("User from middleware:", user);
-
-    // Fetch participants as per role
-    let participants = [];
-    if (role === "supervisor") {
-      participants = await Participant.find({});
-    } else if (role === "participant") {
-      participants = await Participant.find({ name });
-    }
-
-    res.status(200).send({ success: true, data: participants });
+    const participants = await Participant.find({});
+    res.send({ success: true, data: participants });
   } catch (error) {
-    console.error("Error fetching participants:", error.message);
-    res.status(500).send({
-      success: false,
-      error: "Server error while fetching participants.",
-    });
+    console.error(error);
+    res.status(400).send({ success: false, error });
   }
 });
-
-
-
 
 // Add participant (Admin only)
 router.post("/", adminAuth, async (req, res) => {
   try {
     const participant = new Participant(req.body);
     await participant.save();
-    res.status(201).send({
-      success: true,
-      data: participant,
-      message: "Participant created successfuly",
-    });
+    res
+      .status(201)
+      .send({
+        success: true,
+        data: participant,
+        message: "Participant created successfuly",
+      });
   } catch (error) {
     console.error(error);
     res.status(400).send({ success: false, error });
@@ -89,42 +65,21 @@ router.post("/", adminAuth, async (req, res) => {
 });
 
 // Add episode data to a participant (Admin only)
-// router.post('/:id/episodes', adminAuth, async (req, res) => {
-//     try {
-//         const participant = await Participant.findById(req.params.id);
-//         if (!participant) {
-//             return res.status(404).send({ success: false, error: "Perticipant not found" });
-//         }
-//         const { FINAL_STRESS, INITIAL_STRESS } = req.body;
-//         participant.episodes.push({ FINAL_STRESS, INITIAL_STRESS });
-//         await participant.save();
-//         res.send({ success: true, data: participant, message: "participant updated succesfully" });
-//     } catch (error) {
-//         console.error(error)
-//         res.status(400).send({ success: false, error });
-//     }
-// });
-
-// Add or update the episode object for a participant (Admin only)
-router.post("/:id/episode", adminAuth, async (req, res) => {
+router.post("/:id/episodes", adminAuth, async (req, res) => {
   try {
     const participant = await Participant.findById(req.params.id);
     if (!participant) {
       return res
         .status(404)
-        .send({ success: false, error: "Participant not found" });
+        .send({ success: false, error: "Perticipant not found" });
     }
-
-    const { FINAL_STRESS, INITIAL_STRESS } = req.body;
-
-    // Set or update the episode object
-    participant.episodes = { FINAL_STRESS, INITIAL_STRESS };
+    const { STAI, NASA } = req.body;
+    participant.episodes.push({ STAI, NASA });
     await participant.save();
-
     res.send({
       success: true,
       data: participant,
-      message: "Participant updated successfully",
+      message: "participant updated succesfully",
     });
   } catch (error) {
     console.error(error);
@@ -160,6 +115,7 @@ router.post("/:id/comment", adminAuth, async (req, res) => {
       .send({ success: false, error: "Error: could not add comment" });
   }
 });
+
 // get comments a participant (User only)
 router.get("/:id/comment", userAuth, async (req, res) => {
   try {
@@ -190,7 +146,7 @@ router.get("/:id", adminAuth, async (req, res) => {
     if (!participant) {
       return res
         .status(404)
-        .send({ success: false, error: "Participant not found" });
+        .send({ success: false, error: "Perticipant not found" });
     }
     res.send({
       success: true,
@@ -215,115 +171,71 @@ router.delete("/:id", adminAuth, async (req, res) => {
   }
 });
 
-// // Delete a specific episode of a participant (Admin only)
-// router.delete('/:participantId/episodes/:episodeIndex', adminAuth, async (req, res) => {
-//     try {
-//         const participant = await Participant.findById(req.params.participantId);
-//         if (!participant) {
-//             return res.status(404).send({ success: false, error: 'Participant not found' });
-//         }
+// Delete a specific episode of a participant (Admin only)
+router.delete(
+  "/:participantId/episodes/:episodeIndex",
+  adminAuth,
+  async (req, res) => {
+    try {
+      const participant = await Participant.findById(req.params.participantId);
+      if (!participant) {
+        return res
+          .status(404)
+          .send({ success: false, error: "Participant not found" });
+      }
 
-//         const episodeIndex = parseInt(req.params.episodeIndex) - 1; // Convert to zero-based index
-//         if (episodeIndex < 0 || episodeIndex >= participant.episodes.length) {
-//             return res.status(404).send({ success: false, error: 'Episode not found' });
-//         }
+      const episodeIndex = parseInt(req.params.episodeIndex) - 1; // Convert to zero-based index
+      if (episodeIndex < 0 || episodeIndex >= participant.episodes.length) {
+        return res
+          .status(404)
+          .send({ success: false, error: "Episode not found" });
+      }
 
-//         participant.episodes.splice(episodeIndex, 1);
-//         await participant.save();
-//         res.send({ success: true, message: 'Episode deleted successfully' });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(400).send({ success: false, error });
-//     }
-// });
-
-// // Edit a specific episode of a participant (Admin only)
-// router.patch('/:participantId/episodes/:episodeIndex', adminAuth, async (req, res) => {
-//     try {
-//         const participant = await Participant.findById(req.params.participantId);
-//         if (!participant) {
-//             return res.status(404).send({ success: false, error: 'Participant not found' });
-//         }
-
-//         const episodeIndex = parseInt(req.params.episodeIndex) - 1; // Convert to zero-based index
-//         if (episodeIndex < 0 || episodeIndex >= participant.episodes.length) {
-//             return res.status(404).send({ success: false, error: 'Episode not found' });
-//         }
-
-//         const { INITIAL_STRESS, FINAL_STRESS } = req.body;
-//         if (INITIAL_STRESS) participant.episodes[episodeIndex].INITIAL_STRESS = INITIAL_STRESS;
-//         if (FINAL_STRESS) participant.episodes[episodeIndex].FINAL_STRESS = FINAL_STRESS;
-
-//         await participant.save();
-//         res.send({ success: true, data: participant, message: 'Episode updated successfully' });
-//     } catch (error) {
-//         console.error(error);
-//         res.status(400).send({ success: false, error });
-//     }
-// });
-
-router.delete("/:participantId/episode", adminAuth, async (req, res) => {
-  try {
-    const participant = await Participant.findById(req.params.participantId);
-    if (!participant) {
-      return res
-        .status(404)
-        .send({ success: false, error: "Participant not found" });
+      participant.episodes.splice(episodeIndex, 1);
+      await participant.save();
+      res.send({ success: true, message: "Episode deleted successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(400).send({ success: false, error });
     }
-
-    participant.episodes = undefined; // Remove the episode object
-    await participant.save();
-    res.send({ success: true, message: "Episode deleted successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(400).send({ success: false, error });
   }
-});
+);
 
-// router.delete("/:participantId/episode", adminAuth, async (req, res) => {
-//   try {
-//     const participant = await Participant.findById(req.params.participantId);
-//     if (!participant) {
-//       return res
-//         .status(404)
-//         .send({ success: false, error: "Participant not found" });
-//     }
+// Edit a specific episode of a participant (Admin only)
+router.patch(
+  "/:participantId/episodes/:episodeIndex",
+  adminAuth,
+  async (req, res) => {
+    try {
+      const participant = await Participant.findById(req.params.participantId);
+      if (!participant) {
+        return res
+          .status(404)
+          .send({ success: false, error: "Participant not found" });
+      }
 
-//     participant.episodes = undefined; // Remove the episode object
-//     await participant.save();
-//     res.send({ success: true, message: "Episode deleted successfully" });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(400).send({ success: false, error });
-//   }
-// });
+      const episodeIndex = parseInt(req.params.episodeIndex) - 1; // Convert to zero-based index
+      if (episodeIndex < 0 || episodeIndex >= participant.episodes.length) {
+        return res
+          .status(404)
+          .send({ success: false, error: "Episode not found" });
+      }
 
-// Edit the episode object of a participant (Admin only)
-router.patch("/:participantId/episode", adminAuth, async (req, res) => {
-  try {
-    const participant = await Participant.findById(req.params.participantId);
-    if (!participant) {
-      return res
-        .status(404)
-        .send({ success: false, error: "Participant not found" });
+      const { STAI, NASA } = req.body;
+      if (STAI) participant.episodes[episodeIndex].STAI = STAI;
+      if (NASA) participant.episodes[episodeIndex].NASA = NASA;
+
+      await participant.save();
+      res.send({
+        success: true,
+        data: participant,
+        message: "Episode updated successfully",
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(400).send({ success: false, error });
     }
-
-    const { INITIAL_STRESS, FINAL_STRESS } = req.body;
-
-    // Update fields directly as frontend already validates them
-    participant.episodes[0].INITIAL_STRESS = INITIAL_STRESS;
-    participant.episodes[0].FINAL_STRESS = FINAL_STRESS;
-
-    await participant.save();
-    res.send({
-      success: true,
-      data: participant,
-      message: "Episode updated successfully",
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ success: false, error: "Internal server error" });
   }
-});
+);
 
 module.exports = router;
