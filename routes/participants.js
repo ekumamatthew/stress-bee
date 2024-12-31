@@ -73,8 +73,8 @@ router.post("/:id/episodes", adminAuth, async (req, res) => {
         .status(404)
         .send({ success: false, error: "Perticipant not found" });
     }
-    const { STAI, NASA } = req.body;
-    participant.episodes.push({ STAI, NASA });
+    const { STAI, FINAL_STRESS } = req.body;
+    participant.episodes.push({ STAI, FINAL_STRESS });
     await participant.save();
     res.send({
       success: true,
@@ -221,9 +221,9 @@ router.patch(
           .send({ success: false, error: "Episode not found" });
       }
 
-      const { STAI, NASA } = req.body;
+      const { STAI, FINAL_STRESS } = req.body;
       if (STAI) participant.episodes[episodeIndex].STAI = STAI;
-      if (NASA) participant.episodes[episodeIndex].NASA = NASA;
+      if (FINAL_STRESS) participant.episodes[episodeIndex].FINAL_STRESS = FINAL_STRESS;
 
       await participant.save();
       res.send({
