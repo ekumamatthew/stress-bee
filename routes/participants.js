@@ -38,13 +38,37 @@ const userAuth = (req, res, next) => {
 // Get all participants
 router.get("/", userAuth, async (req, res) => {
   try {
-    const participants = await Participant.find({});
-    res.send({ success: true, data: participants });
+    const { role, name } = req.query;
+    console.log("Query Parameters - Role:", role, "Name:", name);
+
+    if (!role || !name) {
+      return res.status(400).send({
+        success: false,
+        error: "Missing or invalid user role in the request.",
+      });
+    }
+
+    const user = req.user; // Populated by userAuth middleware
+    console.log("User from middleware:", user);
+
+    // Fetch participants as per role
+    let participants = [];
+    if (role === "supervisor") {
+      participants = await Participant.find({});
+    } else if (role === "participant") {
+      participants = await Participant.find({ name });
+    }
+
+    res.status(200).send({ success: true, data: participants });
   } catch (error) {
-    console.error(error);
-    res.status(400).send({ success: false, error });
+    console.error("Error fetching participants:", error.message);
+    res.status(500).send({
+      success: false,
+      error: "Server error while fetching participants.",
+    });
   }
 });
+
 
 // Add participant (Admin only)
 router.post("/", adminAuth, async (req, res) => {
