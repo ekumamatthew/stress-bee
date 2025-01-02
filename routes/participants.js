@@ -51,13 +51,11 @@ router.post("/", adminAuth, async (req, res) => {
   try {
     const participant = new Participant(req.body);
     await participant.save();
-    res
-      .status(201)
-      .send({
-        success: true,
-        data: participant,
-        message: "Participant created successfuly",
-      });
+    res.status(201).send({
+      success: true,
+      data: participant,
+      message: "Participant created successfuly",
+    });
   } catch (error) {
     console.error(error);
     res.status(400).send({ success: false, error });
@@ -223,7 +221,8 @@ router.patch(
 
       const { STAI, FINAL_STRESS } = req.body;
       if (STAI) participant.episodes[episodeIndex].STAI = STAI;
-      if (FINAL_STRESS) participant.episodes[episodeIndex].FINAL_STRESS = FINAL_STRESS;
+      if (FINAL_STRESS)
+        participant.episodes[episodeIndex].FINAL_STRESS = FINAL_STRESS;
 
       await participant.save();
       res.send({
