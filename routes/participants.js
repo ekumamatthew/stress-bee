@@ -92,7 +92,7 @@ router.post("/:id/episodes", adminAuth, async (req, res) => {
     if (!participant) {
       return res
         .status(404)
-        .send({ success: false, error: "Perticipant not found" });
+        .send({ success: false, error: "Participant not found" });
     }
     const { STAI, FINAL_STRESS } = req.body;
     participant.episodes.push({ STAI, FINAL_STRESS });
@@ -144,7 +144,7 @@ router.get("/:id/comment", userAuth, async (req, res) => {
     if (!participant) {
       return res
         .status(404)
-        .send({ success: false, error: "Perticipant not found" });
+        .send({ success: false, error: "Participant not found" });
     }
 
     res.send({
@@ -167,7 +167,7 @@ router.get("/:id", adminAuth, async (req, res) => {
     if (!participant) {
       return res
         .status(404)
-        .send({ success: false, error: "Perticipant not found" });
+        .send({ success: false, error: "Participant not found" });
     }
     res.send({
       success: true,
