@@ -35,7 +35,7 @@ const userAuth = (req, res, next) => {
   }
 };
 
-// Get all participants
+// Get all participants and filter based on loggedin user role
 router.get("/", userAuth, async (req, res) => {
   try {
     const { role, name } = req.query;
@@ -69,8 +69,7 @@ router.get("/", userAuth, async (req, res) => {
   }
 });
 
-
-// Add participant (Admin only)
+// Add participant (Supervisor only)
 router.post("/", adminAuth, async (req, res) => {
   try {
     const participant = new Participant(req.body);
@@ -86,7 +85,7 @@ router.post("/", adminAuth, async (req, res) => {
   }
 });
 
-// Add episode data to a participant (Admin only)
+// Add episode data to a participant (Supervisor only)
 router.post("/:id/episodes", adminAuth, async (req, res) => {
   try {
     const participant = await Participant.findById(req.params.id);
@@ -109,7 +108,7 @@ router.post("/:id/episodes", adminAuth, async (req, res) => {
   }
 });
 
-// Add comment to a participant (Admin only)
+// Add comment to a participant (Supervisor only)
 router.post("/:id/comment", adminAuth, async (req, res) => {
   if (!req.body.comment)
     return res
@@ -138,7 +137,7 @@ router.post("/:id/comment", adminAuth, async (req, res) => {
   }
 });
 
-// get comments a participant (User only)
+// get comments a participant (Supervisor only)
 router.get("/:id/comment", userAuth, async (req, res) => {
   try {
     const participant = await Participant.findById(req.params.id);
@@ -161,7 +160,7 @@ router.get("/:id/comment", userAuth, async (req, res) => {
   }
 });
 
-// Add episode data to a participant (Admin only)
+// get  participant (Supervisor only)
 router.get("/:id", adminAuth, async (req, res) => {
   try {
     const participant = await Participant.findById(req.params.id);
@@ -181,7 +180,7 @@ router.get("/:id", adminAuth, async (req, res) => {
   }
 });
 
-// Add episode data to a participant (Admin only)
+// Delete participant (supervisor only)
 router.delete("/:id", adminAuth, async (req, res) => {
   try {
     const participant = await Participant.findByIdAndDelete(req.params.id);
@@ -193,7 +192,7 @@ router.delete("/:id", adminAuth, async (req, res) => {
   }
 });
 
-// Delete a specific episode of a participant (Admin only)
+// Delete a specific episode of a participant (supervisor only)
 router.delete(
   "/:participantId/episodes/:episodeIndex",
   adminAuth,

@@ -1,3 +1,9 @@
+
+/**
+ * This is the entry of the backend code. Check readme.md file to see how to run db connection is automatic and will display a console message when connection configuration is properly done from the env
+ */
+
+
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
